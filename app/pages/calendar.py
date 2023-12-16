@@ -117,8 +117,10 @@ layout = html.Div(style={'background-color': egyptian_palette['background']}, ch
     Input("calendar-radio-input", "value"),
 )
 def convert_date_calendar(year, month, day, hour, min, sec, calendar):
+    print(year, month, day, hour, min, sec, calendar)
     date = f'{int(year or 1)}-{int(month or 1):02d}-{int(day or 1):02d} {int(hour or 0):02d}:{int(min or 0):02d}:{int(sec or 0):02d}'  
-    mtime = montu.Time(date, format='iso',scale='utc',calendar=calendar)    
+    mtime = montu.Time(date, format='iso', scale='utc', calendar=calendar)  
+    print(mtime)  
     return get_date_output(mtime)
 
 def get_date_output(mtime):

@@ -8,3 +8,4 @@ pandas
 scipy
 gunicorn
 Montu
+serverless-wsgi

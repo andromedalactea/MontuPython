@@ -1,0 +1,80 @@
+service: test
+
+provider:
+  name: aws
+  runtime: python3.10 # Asegúrate de usar la versión de Python compatible con tu entorno
+  stage: prod
+  region: us-east-1
+  logRetentionInDays: 14
+  timeout: 120
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+  # Define tus variables de entorno aquí si es necesario
+  # environment:
+  #   MONGODB_URI: ${env:MONGODB_URI}
+  #   COGNITO_POOL: ${env:COGNITO_POOL}
+
+# Añade los plugins necesarios
+plugins:
+ - serverless-wsgi
+ - serverless-python-requirements
+ - serverless-offline
+# - serverless-webpack
+
+
+custom:
+  wsgi:
+    app: app.app # Reemplaza `app.app` con el objeto Flask de tu aplicación
+    packRequirements: false
+  pythonRequirements:
+    dockerizePip: true # Usa 'true' si estás desarrollando en Linux
+
+functions:
+  time:
+    handler: handler.lambda_handler
+    events:
+      - http:
+          path: /verifyUser
+          method: post
+          cors: true
+
+          
+# Las siguientes líneas son ejemplos de otros eventos que puedes configurar.
+# Asegúrate de ajustar tu código para que funcione con estos eventos.
+# Revisa la documentación de cada evento para más detalles.
+# events:
+#   - httpApi:
+#       path: /users/create
+#       method: get
+#   - s3: ${env:BUCKET}
+#   - schedule: rate(10 minutes)
+#   - sns: greeter-topic
+#   - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
+#   - alexaSkill: amzn1.ask.skill.xx-xx-xx-xx
+#   - alexaSmartHome: amzn1.ask.skill.xx-xx-xx-xx
+#   - iot:
+#       sql: "SELECT * FROM 'some_topic'"
+#   - cloudwatchEvent:
+#       event:
+#         source:
+#           - "aws.ec2"
+#         detail-type:
+#           - "EC2 Instance State-change Notification"
+#         detail:
+#           state:
+#             - pending
+#   - cloudwatchLog: '/aws/lambda/hello'
+#   - cognitoUserPool:
+#       pool: MyUserPool
+#       trigger: PreSignUp
+#   - alb:
+#       listenerArn: arn:aws:elasticloadbalancing:us-east-1:XXXXXX:listener/app/my-load-balancer/50dc6c495c0c9188/
+#       priority: 1
+#       conditions:
+#         host: example.com
+#         path: /hello
